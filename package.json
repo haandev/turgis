@@ -1,0 +1,19 @@
+{
+  "name": "geoinformation",
+  "version": "1.0.0",
+  "description": "koordinatları verilen noktanın türkiye ulusal paftalama sistemine göre isimlendirilmiş halini verir",
+  "main": "paftabul.js",
+  "dependencies": {
+    "decimal.js": "^10.2.1",
+    "gdal": "^0.10.1",
+    "gdal-next": "^2.8.0",
+    "geolib": "^3.3.1"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "hakan özoğlu / haandev / mhozoglu@yandex.com.tr",
+  "license": "ISC",
+  "type": "commonjs"
+}
