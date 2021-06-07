@@ -11,15 +11,24 @@ const geolib = require('geolib');
 
 const CoordinatTypes = {
     DECIMAL:0,
-    SEXADECIMAL:1
+    SEXAGESIMAL:1
 }
-const findPafta = function (lat=`41.021225596`,long=`29.0040779114`,coordinatType=CoordinatTypes.DECIMAL) {
-    if (coordinatType === CoordinatTypes.SEXADECIMAL) {
-        _lat = geolib.sexagesimalToDecimal(lat);
-        _long = geolib.sexagesimalToDecimal(long);
+const findPafta = function (lat,long,coordinatType=CoordinatTypes.DECIMAL) {
+    let _lat, _long;
+    if (coordinatType === CoordinatTypes.SEXAGESIMAL) {
+        _lat = lat;
+        _long = long
+        _lat =_lat.replace(/''/g,'"')
+        _long=_long.replace(/''/g,'"')
+        _lat =_lat.replace(/″/g,'"')
+        _long=_long.replace(/″/g,'"')
+        _lat =_lat.replace(/′/g,"'")
+        _long=_long.replace(/′/g,"'")
+        _lat = geolib.sexagesimalToDecimal(_lat);
+        _long = geolib.sexagesimalToDecimal(_long);
     } else {
-        let _lat = lat;
-        let _long = long
+        _lat = lat;
+        _long = long
     }
     const R12 = [35, 24]
     const cities = [
@@ -97,7 +106,7 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`,coordinatTyp
     const cols = ['R', 'Q', 'P', 'O', 'N', 'M', 'L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
     let temp, rem, tempString, tempCity;
     const pafta = {}
-    const diff = [lat,long].map(p => new Decimal(p)).map((p, i) => p.sub(R12[i]))
+    const diff = [_lat,_long].map(p => new Decimal(p)).map((p, i) => p.sub(R12[i]))
     temp = diff.map(d => d.div(0.5).floor())
     tempString = cols[temp[0]] + (temp[1].plus(12)).toString();
     tempCity = cities.find(city => (city.containing.includes(tempString)))?.name || "";
@@ -154,3 +163,6 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`,coordinatTyp
         return pafta[_type]
     })
 }
+console.log(findPafta("39° 55′ 30″ N","32° 50′ 13″ E",CoordinatTypes.SEXAGESIMAL)("1/500",true))
+console.log(findPafta("39° 55' 30'' N","32° 50' 13'' E",CoordinatTypes.SEXAGESIMAL)("1/500",true))
+console.log(findPafta("39.925","32.837",CoordinatTypes.DECIMAL)("1/500",true))
