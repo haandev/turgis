@@ -7,8 +7,20 @@
  */
 
 const Decimal = require('decimal.js');
+const geolib = require('geolib');
 
-const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
+const CoordinatTypes = {
+    DECIMAL:0,
+    SEXADECIMAL:1
+}
+const findPafta = function (lat=`41.021225596`,long=`29.0040779114`,coordinatType=CoordinatTypes.DECIMAL) {
+    if (coordinatType === CoordinatTypes.SEXADECIMAL) {
+        _lat = geolib.sexagesimalToDecimal(lat);
+        _long = geolib.sexagesimalToDecimal(long);
+    } else {
+        let _lat = lat;
+        let _long = long
+    }
     const R12 = [35, 24]
     const cities = [
         {name: "EDİRNE", containing: ["E15", "E16", "E17", "F15", "F16", "F17"]},
@@ -85,7 +97,6 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
     const cols = ['R', 'Q', 'P', 'O', 'N', 'M', 'L', 'K', 'J', 'I', 'H', 'G', 'F', 'E', 'D', 'C', 'B', 'A']
     let temp, rem, tempString, tempCity;
     const pafta = {}
-    console.log("Giriş Koordinatı",lat,long);
     const diff = [lat,long].map(p => new Decimal(p)).map((p, i) => p.sub(R12[i]))
     temp = diff.map(d => d.div(0.5).floor())
     tempString = cols[temp[0]] + (temp[1].plus(12)).toString();
@@ -143,4 +154,3 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
         return pafta[_type]
     })
 }
-console.log(findPafta(41.021161, 29.003738)("1/5000",true))
