@@ -3,10 +3,9 @@
  * içinde kaldığı pafta isimlerini dönen yardımcı araç
  * author : hakan özoğlu / mhozoglu@yandex.com.tr / 0541 276 9700
  *
- * not : türkiye ulusal paftalama sistemine göre çalışmaktadır
+ * not : türkiye ulusal pafta bölümlemesine göre çalışmaktadır
  */
 
-const geolib = require('geolib');
 const Decimal = require('decimal.js');
 
 const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
@@ -15,6 +14,7 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
         {name: "EDİRNE", containing: ["E15", "E16", "E17", "F15", "F16", "F17"]},
         {name: "ÇANAKKALE", containing: ["G15", "G16", "G17", "H15", "H16", "H17"]},
         {name: "AYVALIK", containing: ["I15", "I16", "I17", "J15", "J16", "J17"]},
+        {name: "URLA", containing: ["K15", "K16", "K17", "L15", "L16", "L17"]},
         {name: "KIRKLARELİ", containing: ["E18", "E19", "E20", "F18", "F19", "F20"]},
         {name: "BANDIRMA", containing: ["G18", "G19", "G20", "H18", "H19", "H20"]},
         {name: "BALIKESİR", containing: ["I18", "I19", "I20", "J18", "J19", "J20"]},
@@ -57,14 +57,18 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
         {name: "ELBİSTAN", containing: ["K36", "K37", "K38", "L36", "L37", "L38"]},
         {name: "GAZİANTEP", containing: ["M36", "M37", "M38", "N36", "N37", "N38"]},
         {name: "ANTAKYA", containing: ["O36", "O37", "O38", "P36", "P37", "P38"]},
+        {name: "PERŞEMBE", containing: ["E39", "E40", "E41", "F39", "F40", "F41"]},
         {name: "GİRESUN", containing: ["G39", "G40", "G41", "H39", "H40", "H41"]},
         {name: "DİVRİĞİ", containing: ["I39", "I40", "I41", "J39", "J40", "J41"]},
         {name: "MALATYA", containing: ["K39", "K40", "K41", "L39", "L40", "L41"]},
         {name: "URFA", containing: ["M39", "M40", "M41", "N39", "N40", "N41"]},
+        {name: "SURUÇ", containing: ["O39", "O40", "O41", "P39", "P40", "P41"]},
+        {name: "AKÇAABAT", containing: ["E42", "E43", "E44", "F42", "F43", "F44"]},
         {name: "TRABZON", containing: ["G42", "G43", "G44", "H42", "H43", "H44"]},
         {name: "ERZİNCAN", containing: ["I42", "I43", "I44", "J42", "J43", "J44"]},
         {name: "ELAZIĞ", containing: ["K42", "K43", "K44", "L42", "L43", "L44"]},
         {name: "DİYARBAKIR", containing: ["M42", "M43", "M44", "N42", "N43", "N44"]},
+        {name: "CEYLANPINAR", containing: ["O42", "O43", "O44", "P42", "P43", "P44"]},
         {name: "ARTVİN", containing: ["E45", "E46", "E47", "F45", "F46", "F47"]},
         {name: "TORTUM", containing: ["G45", "G46", "G47", "H45", "H46", "H47"]},
         {name: "ERZURUM", containing: ["I45", "I46", "I47", "J45", "J46", "J47"]},
@@ -88,7 +92,8 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
     tempCity = cities.find(city => (city.containing.includes(tempString)))?.name || "";
     if (!!tempCity) {
         pafta["1/250000"] = tempCity
-        pafta["1/100000"] = tempCity+"-"+tempString
+        pafta["1/100000C"] = tempCity+"-"+tempString
+        pafta["1/100000"] = tempString
     } else { pafta["1/100000"] = tempString }
     rem = diff.map(p => p.modulo(0.5));
     const lowerLetterNotation = [['d', 'c'], ['a', 'b']];
@@ -102,29 +107,40 @@ const findPafta = function (lat=`41.021225596`,long=`29.0040779114`) {
     ];
     temp = rem.map(d => d.div(0.25).floor())
     pafta["1/50000"] = pafta["1/100000"] + "-" + lowerLetterNotation[temp[0]][temp[1]]
+    pafta["1/50000C"] = pafta["1/100000C"] + "-" + lowerLetterNotation[temp[0]][temp[1]]
     rem = diff.map(p => p.modulo(0.25));
 
     temp = rem.map(d => d.div(0.05).floor())
     pafta["1/10000"] = pafta["1/50000"] + "-" + twentyOneNumberNotation[temp[0]][temp[1]]
+    pafta["1/10000C"] = pafta["1/50000C"] + "-" + twentyOneNumberNotation[temp[0]][temp[1]]
 
     temp = rem.map(d => d.div(0.125).floor())
     pafta["1/25000"] = pafta["1/50000"] + fourNumberNotation[temp[0]][temp[1]]
+    pafta["1/25000C"] = pafta["1/50000C"] + fourNumberNotation[temp[0]][temp[1]]
     rem = diff.map(p => p.modulo(0.05));
 
     temp = rem.map(d => d.div(0.025).floor())
     pafta["1/5000"] = pafta["1/10000"] + "-" + lowerLetterNotation[temp[0]][temp[1]]
+    pafta["1/5000C"] = pafta["1/10000C"] + "-" + lowerLetterNotation[temp[0]][temp[1]]
     rem = diff.map(p => p.modulo(0.025));
 
     temp = rem.map(d => d.div(0.0125).floor())
     pafta["1/2000"] = pafta["1/5000"] + "-" + fourNumberNotation[temp[0]][temp[1]]
+    pafta["1/2000C"] = pafta["1/5000C"] + "-" + fourNumberNotation[temp[0]][temp[1]]
     rem = diff.map(p => p.modulo(0.0125));
 
     temp = rem.map(d => d.div(0.00625).floor())
     pafta["1/1000"] = pafta["1/2000"] + "-" + lowerLetterNotation[temp[0]][temp[1]]
+    pafta["1/1000C"] = pafta["1/2000C"] + "-" + lowerLetterNotation[temp[0]][temp[1]]
     rem = diff.map(p => p.modulo(0.00625));
 
     temp = rem.map(d => d.div(0.003125).floor())
     pafta["1/500"] = pafta["1/1000"] + "-" + fourNumberNotation[temp[0]][temp[1]]
-    return pafta
+    pafta["1/500C"] = pafta["1/1000C"] + "-" + fourNumberNotation[temp[0]][temp[1]]
+    return ((type,city=false)=>{
+        let _type = type
+        if (city==true) _type = type+"C"
+        return pafta[_type]
+    })
 }
-console.log(findPafta(41.021161, 29.003738))
+console.log(findPafta(41.021161, 29.003738)("1/5000",true))
