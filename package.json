@@ -1,0 +1,12 @@
+{
+  "name": "turgis",
+  "version": "1.0.0",
+  "type": "module",
+  "dependencies": {
+    "express": "^4.17.1",
+    "gdal-async": "^3.2.3",
+    "gdal-next": "^2.8.0",
+    "decimal.js": "^10.2.1",
+    "geolib": "^3.3.1"
+  }
+}
