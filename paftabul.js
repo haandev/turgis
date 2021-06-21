@@ -6,30 +6,22 @@
  * not : türkiye ulusal pafta bölümlemesine göre çalışmaktadır
  */
 
-const Decimal = require('decimal.js');
-const geolib = require('geolib');
 
-const CoordinatTypes = {
-    DECIMAL:0,
-    SEXAGESIMAL:1
-}
-const findPafta = function (lat,long,coordinatType=CoordinatTypes.DECIMAL) {
-    let _lat, _long;
-    if (coordinatType === CoordinatTypes.SEXAGESIMAL) {
-        _lat = lat;
-        _long = long
-        _lat =_lat.replace(/''/g,'"')
-        _long=_long.replace(/''/g,'"')
-        _lat =_lat.replace(/″/g,'"')
-        _long=_long.replace(/″/g,'"')
-        _lat =_lat.replace(/′/g,"'")
-        _long=_long.replace(/′/g,"'")
-        _lat = geolib.sexagesimalToDecimal(_lat);
-        _long = geolib.sexagesimalToDecimal(_long);
-    } else {
-        _lat = lat;
-        _long = long
-    }
+import Decimal from 'decimal.js'
+import geolib from 'geolib'
+
+const findPafta = function (lat,long) {
+    let _lat = lat;
+    let _long = long
+    _lat =_lat.replace(/''/g,'"')
+    _long=_long.replace(/''/g,'"')
+    _lat =_lat.replace(/″/g,'"')
+    _long=_long.replace(/″/g,'"')
+    _lat =_lat.replace(/′/g,"'")
+    _long=_long.replace(/′/g,"'")
+    _lat = geolib.toDecimal(_lat)
+    _long = geolib.toDecimal(_long)
+
     const R12 = [35, 24]
     const cities = [
         {name: "EDİRNE", containing: ["E15", "E16", "E17", "F15", "F16", "F17"]},
@@ -163,6 +155,8 @@ const findPafta = function (lat,long,coordinatType=CoordinatTypes.DECIMAL) {
         return pafta[_type]
     })
 }
-console.log(findPafta("39° 55′ 30″ N","32° 50′ 13″ E",CoordinatTypes.SEXAGESIMAL)("1/500",true))
-console.log(findPafta("39° 55' 30'' N","32° 50' 13'' E",CoordinatTypes.SEXAGESIMAL)("1/500",true))
-console.log(findPafta("39.925","32.837",CoordinatTypes.DECIMAL)("1/500",true))
+console.log(findPafta("39° 55′ 30″ N","32° 50′ 13″ E")("1/500",true))
+console.log(findPafta("39° 55' 30'' N","32° 50' 13'' E")("1/500",true))
+console.log(findPafta("39.925","32.837")("1/500",true))
+
+export default findPafta
